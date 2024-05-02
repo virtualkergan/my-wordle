@@ -7,7 +7,7 @@ import java.awt.event.*;
  * 
  * @author Kergan Sanderson
  */
-public class WordleGUI implements ActionListener {
+public class WordleGUI implements KeyListener {
 
     /** The green color used for the letters. */
     public static final Color GREEN = new Color(65, 179, 65);
@@ -34,7 +34,7 @@ public class WordleGUI implements ActionListener {
     private JFrame frame;
 
     /** The button to press to submit your guess. */
-    private JButton submitButton;
+    private JLabel submitLabel;
 
     /** The field to type in your guess. */
     private JTextField wordField;
@@ -57,7 +57,7 @@ public class WordleGUI implements ActionListener {
 
         // create instance variables
         frame = new JFrame();
-        submitButton = new JButton("Guess");
+        submitLabel = new JLabel("Guess: ");
         wordField = new JTextField(5);
         letters = new JTextField[6][5];
         keyboard = new JTextField[26];
@@ -121,7 +121,7 @@ public class WordleGUI implements ActionListener {
         // place the button and the guess entry field
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
-        buttonPanel.add(submitButton);
+        buttonPanel.add(submitLabel);
         buttonPanel.add(wordField);
 
         // populate the bottomPanel
@@ -133,8 +133,20 @@ public class WordleGUI implements ActionListener {
         frame.add(bottomPanel, BorderLayout.SOUTH);
         frame.pack();
 
-        // add the GUI as an event listener to the button
-        submitButton.addActionListener(this);
+        // add the GUI as an event listener to the word field
+        wordField.addKeyListener(this);
+
+        // BOILERPLATE:
+        // Got this from the Oracle website on how to use the Focus Subsystem
+
+        // *********************************************************************
+        //Make textField get the focus whenever frame is activated.
+        frame.addWindowFocusListener(new WindowAdapter() {
+            public void windowGainedFocus(WindowEvent e) {
+                wordField.requestFocusInWindow();
+            }
+        });
+        // *********************************************************************
 
         // make the frame visible in the center of the screen
         frame.setLocationRelativeTo(null);
@@ -142,11 +154,33 @@ public class WordleGUI implements ActionListener {
     }
 
     /**
-     * Called when the submit button is pressed.
+     * Called when a key is pressed on the keyboard.
+     * 
+     * @param e keyEvent from the keyboard
      */
-    public void actionPerformed(ActionEvent event) {
-        controller.getGuessResults(wordField.getText().toLowerCase());
-        wordField.setText("");
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == 10) {
+            controller.getGuessResults(wordField.getText().toLowerCase());
+            wordField.setText("");
+        }
+    }
+
+    /**
+     * Called when a key is typed on the keyboard.
+     * 
+     * @param e keyEvent from the keyboard
+     */
+    public void keyTyped(KeyEvent e) {
+        // nothing goes here (satisfies implement KeyListener)
+    }
+
+    /**
+     * Called when a key is released on the keyboard.
+     * 
+     * @param e keyEvent from the keyboard
+     */
+    public void keyReleased(KeyEvent e) {
+        // nothing goes here (satisfies implement KeyListener)
     }
 
     /**
