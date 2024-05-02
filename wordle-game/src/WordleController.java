@@ -25,11 +25,25 @@ public class WordleController {
      */
     public void getGuessResults(String guess) {
         if (model.isValidGuess(guess)) {
+            // don't allow gameplay if game is over
             if (model.isOutOfTurns() || model.getHasGuessedSecretWord()) {
                 view.endGame(model.getSecretWord());
             } else {
                 view.displayGuess(model.getGuessResults(guess));
+
+                // check if game is over
+                if (model.isOutOfTurns() || model.getHasGuessedSecretWord()) {
+                    view.endGame(model.getSecretWord());
+                }
             }
         }
+    }
+
+    /**
+     * Starts a new game by refreshing the model and the view.
+     */
+    public void startNewGame() {
+        view.clearOutput();
+        model.resetGame();
     }
 }

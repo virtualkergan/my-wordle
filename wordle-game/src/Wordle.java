@@ -77,6 +77,8 @@ public class Wordle {
 
         // set number of guesses equal to 0
         numberOfGuesses = 0;
+
+        hasGuessedSecretWord = false;
     }
 
     /**
@@ -198,16 +200,37 @@ public class Wordle {
 
     /**
      * Returns the index of a letter in the alphabet.
+     * Note that this method is static since it is reused in WordleGUI.
      * 
      * @param letter the letter who's index will be returned
      * @return the index 0 - 25 of a letter in the alphabet
      */
-    public int indexOfLetter(char letter) {
+    public static int indexOfLetter(char letter) {
         for (int i = 0; i < THE_ALPHABET.length; i++) {
             if (letter == THE_ALPHABET[i]) {
                 return i;
             }
         }
         return -1;
+    }
+
+    /**
+     * Resets the model, choosing a new secret word to start a new game.
+     */
+    public void resetGame() {
+        // gets a new secret word
+        Random rand = new Random();
+        secretWord = wordList[
+                rand.nextInt(ANSWER_INDEX, TOTAL_NUMBER_OF_WORDS)];
+        
+        // record the number of each letter in the secret word
+        lettersInSecretWord = new int[THE_ALPHABET.length];
+        updateLettersInSecretWord();
+
+        // set number of guesses equal to 0
+        numberOfGuesses = 0;
+
+        // player hasn't guessed the secret word
+        hasGuessedSecretWord = false;
     }
 }
