@@ -35,14 +35,14 @@ public class Wordle {
     /** The current secret word. */
     private String secretWord;
 
+    /** Whether or not the player has guessed the secret word yet. */
+    private boolean hasGuessedSecretWord;
+
     /** The number of each letter in the secret word. */
     private int[] lettersInSecretWord;
 
     /** The number of guesses the player has made. */
     private int numberOfGuesses;
-
-    /** The player's current guess. */
-    private String currentGuess;
 
     /**
      * Creates the model, storing the word list and picking a secret word.
@@ -77,9 +77,6 @@ public class Wordle {
 
         // set number of guesses equal to 0
         numberOfGuesses = 0;
-
-        // initialize guess instance variables
-        currentGuess = "";
     }
 
     /**
@@ -89,26 +86,6 @@ public class Wordle {
      */
     public String getSecretWord() {
         return secretWord;
-    }
-
-    /**
-     * Getter method for the current guess.
-     * 
-     * @return the player's current guess
-     */
-    public String getCurrentGuess() {
-        return currentGuess;
-    }
-
-    /**
-     * Setter method for the current guess.
-     * Updates numberOfGuesses.
-     * 
-     * @param guess the player's current guess
-     */
-    public void setCurrentGuess(String guess) {
-        currentGuess = guess;
-        numberOfGuesses++;
     }
 
     /**
@@ -122,7 +99,7 @@ public class Wordle {
             return false;
         }
         for (String s : wordList) {
-            if (s.equals(currentGuess)) {
+            if (s.equals(word)) {
                 return true;
             }
         }
@@ -136,9 +113,17 @@ public class Wordle {
      * @return true if the player is out of guesses or the current guess is the 
      *         secret word
      */
-    public boolean isGameOver() {
-        return numberOfGuesses == GUESSES_IN_GAME ||
-                currentGuess.equals(secretWord);
+    public boolean isOutOfTurns() {
+        return numberOfGuesses == GUESSES_IN_GAME;
+    }
+
+    /**
+     * Returns whether the player has already guessed the secret word or not.
+     * 
+     * @return true if the player has already guessed the secret word
+     */
+    public boolean getHasGuessedSecretWord() {
+        return hasGuessedSecretWord;
     }
 
     /**
@@ -163,7 +148,7 @@ public class Wordle {
      * 
      * @return the colors of the current guess
      */
-    public char[] getGuessColors() {
+    public GuessResult getGuessResults(String guess) {
         // used to store the index of a letter in the alphabet
         int lIndex = 0;
 
@@ -176,9 +161,9 @@ public class Wordle {
         // get green letters first
         for (int i = 0; i < LETTERS_IN_WORD; i++) {
 
-            if (currentGuess.charAt(i) == secretWord.charAt(i)) {
+            if (guess.charAt(i) == secretWord.charAt(i)) {
                 guessColors[i] = 'G';
-                lIndex = indexOfLetter(currentGuess.charAt(i));
+                lIndex = indexOfLetter(guess.charAt(i));
                 matchedLetters[lIndex]++;
             }
         }
@@ -191,7 +176,7 @@ public class Wordle {
                 continue;
             }
 
-            lIndex = indexOfLetter(currentGuess.charAt(i));
+            lIndex = indexOfLetter(guess.charAt(i));
 
             // don't record 'Y' if there is no more of that letter
             if (matchedLetters[lIndex] < lettersInSecretWord[lIndex]) {
@@ -200,7 +185,15 @@ public class Wordle {
             }
         }
 
-        return guessColors;
+        // update the number of guesses that have been made in the game
+        numberOfGuesses++;
+
+        // update whether the user has guessed the secret word
+        if (guess.equals(secretWord)) {
+            hasGuessedSecretWord = true;
+        }
+
+        return new GuessResult(guess, guessColors, numberOfGuesses - 1);
     }
 
     /**
