@@ -10,7 +10,7 @@ To play this game:
 
 ## motivation
 
-I wanted a chance to practice creating a GUI using the javax.swing framework.
+I wanted a chance to practice creating a GUI using the javax.swing framework. I also wanted to design and implement a project on my own using the content that I learned in my CSC 116 introductory computer science class at NCSU.
 
 ## notes
 
