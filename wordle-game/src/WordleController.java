@@ -22,6 +22,8 @@ public class WordleController {
     /**
      * Updates the current guess in the model given a guess from the view and 
      * returns the results of that guess.
+     * 
+     * @param guess the word that was entered by the user
      */
     public void getGuessResults(String guess) {
         if (model.isValidGuess(guess)) {

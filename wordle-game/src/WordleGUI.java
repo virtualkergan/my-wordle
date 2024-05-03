@@ -18,6 +18,15 @@ public class WordleGUI implements KeyListener {
     /** The gray color used for the letters. */
     public static final Color GRAY = new Color(150, 150, 150);
 
+    /** The font size to use for the letters guessed. */
+    public static final int LETTER_SIZE = 60;
+
+    /** The preferred size of the letter guess boxes. */
+    public static final int LETTER_BOX_SIZE = 80;
+
+    /** The number of keys in each row of a QWERTY keyboard. */
+    public static final int[] ROW_KEYS = {10, 9, 7};
+
     /** The order of the QWERTY keyboard layout. */
     public static final char[] QWERTY = {'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',
                                          'o', 'p', 'a', 's', 'd', 'f', 'g', 'h',
@@ -25,7 +34,9 @@ public class WordleGUI implements KeyListener {
                                          'n', 'm'};
     
     /** Map of alphabet indeces to QWERTY indeces. */
-    public static final int[] A_TO_Q = {10, 23, 21, 12, 2, 13, 14, 15, 7, 16, 17, 18, 25, 24, 8, 9, 0, 3, 11, 4, 6, 22, 1, 20, 5, 19};
+    public static final int[] A_TO_Q = {10, 23, 21, 12, 2, 13, 14, 15, 7,
+                                        16, 17, 18, 25, 24, 8, 9, 0, 3,
+                                        11, 4, 6, 22, 1, 20, 5, 19};
 
     /** The controller for this game of Wordle. */
     private WordleController controller;
@@ -51,16 +62,15 @@ public class WordleGUI implements KeyListener {
      * @param controller the controller for the game of Wordle
      */
     public WordleGUI(WordleController controller) {
-
         // create reference to the controller
         this.controller = controller;
 
         // create instance variables
         frame = new JFrame();
         submitLabel = new JLabel("Guess: ");
-        wordField = new JTextField(5);
-        letters = new JTextField[6][5];
-        keyboard = new JTextField[26];
+        wordField = new JTextField(Wordle.LETTERS_IN_WORD);
+        letters = new JTextField[Wordle.GUESSES_IN_GAME][Wordle.LETTERS_IN_WORD];
+        keyboard = new JTextField[QWERTY.length];
 
         // set up the frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,11 +81,13 @@ public class WordleGUI implements KeyListener {
         // create a font with increased size for display of letters
         JTextField tempField = new JTextField();
         Font letterFont = new Font(tempField.getFont().getName(),
-                tempField.getFont().getStyle(),60);
+                tempField.getFont().getStyle(),LETTER_SIZE);
         tempField = null;
         
         // fill the letter panel with the letter text fields
-        JPanel letterPanel = new JPanel(new GridLayout(6,5));
+        JPanel letterPanel = new JPanel(
+                new GridLayout(Wordle.GUESSES_IN_GAME,Wordle.LETTERS_IN_WORD));
+        
         for (int i = 0; i < Wordle.GUESSES_IN_GAME; i++) {
             for (int j = 0; j < Wordle.LETTERS_IN_WORD; j++) {
                 letters[i][j] = new JTextField();
@@ -83,7 +95,7 @@ public class WordleGUI implements KeyListener {
                 letters[i][j].setForeground(Color.WHITE);
                 letters[i][j].setEditable(false);
                 letters[i][j].setHorizontalAlignment(JTextField.CENTER);
-                letters[i][j].setPreferredSize(new Dimension(80,80));
+                letters[i][j].setPreferredSize(new Dimension(LETTER_BOX_SIZE, LETTER_BOX_SIZE));
                 letterPanel.add(letters[i][j]);
             }
         }
@@ -94,9 +106,9 @@ public class WordleGUI implements KeyListener {
 
         // create the keyboard representation
         JPanel keyboardPanel = new JPanel();
-        keyboardPanel.setLayout(new GridLayout(3, 11));
+        keyboardPanel.setLayout(new GridLayout(3, ROW_KEYS[0]));
 
-        for (int i = 0; i < 19; i++) {
+        for (int i = 0; i < ROW_KEYS[0] + ROW_KEYS[1]; i++) {
             keyboard[i] = new JTextField(1);
             keyboard[i].setText(Character.toString(QWERTY[i]));
             keyboard[i].setEditable(false);
@@ -107,7 +119,7 @@ public class WordleGUI implements KeyListener {
         keyboardPanel.add(new JLabel());
         keyboardPanel.add(new JLabel());
         
-        for (int i = 19; i < 26; i++) {
+        for (int i = ROW_KEYS[0] + ROW_KEYS[1]; i < QWERTY.length; i++) {
             keyboard[i] = new JTextField(1);
             keyboard[i].setText(Character.toString(QWERTY[i]));
             keyboard[i].setEditable(false);
@@ -187,9 +199,7 @@ public class WordleGUI implements KeyListener {
      * Sets the colors and letters for a row of guesses given the guess and 
      * the colors.
      * 
-     * @param letters the letters of the guess to display
-     * @param colors the colors of the guess to display
-     * @param guessIndex the index of the row to display the letters on
+     * @param result the results of the user's guess, stored as a GuessResult
      */
     public void displayGuess(GuessResult result) {
         char[] guessLetters = result.getLetters();
@@ -209,12 +219,14 @@ public class WordleGUI implements KeyListener {
 
     /**
      * Updates the keyboard representation of the GUI.
+     * 
+     * @param result the results of the user's guess, stored as a GuessResult
      */
     public void updateKeyboard(GuessResult result) {
         char[] guessLetters = result.getLetters();
         char[] guessColors = result.getColors();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < Wordle.LETTERS_IN_WORD; i++) {
             // get the index of the letter in the alphabet
             int index = Wordle.indexOfLetter(guessLetters[i]);
             // converts the index to the index in qwerty
@@ -256,6 +268,8 @@ public class WordleGUI implements KeyListener {
     /**
      * Ends the game by shutting down functionality of the GUI and displaying a 
      * pop up dialog box.
+     * 
+     * @param secretWord the secret word that the user is trying to guess
      */
     public void endGame(String secretWord) {
         wordField.setEditable(false);
@@ -273,7 +287,6 @@ public class WordleGUI implements KeyListener {
      * Clears the output for a new game.
      */
     public void clearOutput() {
-
         // reset displayed guesses
         for (int i = 0; i < Wordle.GUESSES_IN_GAME; i++) {
             for (int j = 0; j < Wordle.LETTERS_IN_WORD; j++) {

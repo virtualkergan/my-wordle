@@ -18,7 +18,8 @@ public class GuessResult {
      * Creates the guess result given the word and its colors.
      * 
      * @param guess the guess itself
-     * @param colors the resulting colors for the guess
+     * @param guessColors the resulting colors for the guess
+     * @param index the index of the guess from 0 to 5
      */
     public GuessResult(String guess, char[] guessColors, int index) {
         this.letters = new char[Wordle.LETTERS_IN_WORD];

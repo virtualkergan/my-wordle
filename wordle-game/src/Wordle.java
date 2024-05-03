@@ -148,6 +148,7 @@ public class Wordle {
      * your guessed letters appear in the secret word.
      * G is green, Y is yellow, and R is gray.
      * 
+     * @param guess the guess to report results for
      * @return the colors of the current guess
      */
     public GuessResult getGuessResults(String guess) {
@@ -162,7 +163,6 @@ public class Wordle {
 
         // get green letters first
         for (int i = 0; i < LETTERS_IN_WORD; i++) {
-
             if (guess.charAt(i) == secretWord.charAt(i)) {
                 guessColors[i] = 'G';
                 lIndex = indexOfLetter(guess.charAt(i));
@@ -172,7 +172,6 @@ public class Wordle {
 
         // get yellow letters next
         for (int i = 0; i < LETTERS_IN_WORD; i++) {
-
             // skip already green letters to avoid double counting
             if (guessColors[i] == 'G') {
                 continue;
