@@ -1,7 +1,7 @@
 # my-wordle
 
 To play this game:
-- clone the repository,
+- download this repository
 - navigate in your terminal to wordle-game/
 - run the following two commands:
     - javac -d bin -cp bin src/\*.java
