@@ -291,7 +291,7 @@ public class WordleGUI implements KeyListener {
         for (int i = 0; i < Wordle.GUESSES_IN_GAME; i++) {
             for (int j = 0; j < Wordle.LETTERS_IN_WORD; j++) {
                 letters[i][j].setText("");
-                letters[i][j].setBackground(null);
+                letters[i][j].setBackground((new JTextField()).getBackground());
             }
         }
         // open the guess field for more guesses
@@ -299,8 +299,8 @@ public class WordleGUI implements KeyListener {
 
         // reset the keyboard representation
         for (JTextField key : keyboard) {
-            key.setForeground(null);
-            key.setBackground(null);
+            key.setForeground((new JTextField()).getForeground());
+            key.setBackground((new JTextField()).getBackground());
         }
     }
 }
