@@ -274,7 +274,7 @@ public class WordleGUI implements KeyListener {
     public void endGame(String secretWord) {
         wordField.setEditable(false);
         int choice = JOptionPane.showConfirmDialog(frame,
-                "The word was: " + secretWord + "\n"
+                "The word was: " + secretWord.toUpperCase() + "\n"
                 + "Want to play again?");
         if (choice == JOptionPane.YES_OPTION) {
             controller.startNewGame();
