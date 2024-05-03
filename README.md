@@ -6,7 +6,6 @@ To play this game:
 - run the following two commands:
     - javac -d bin -cp bin src/\*.java
     - java -cp bin WordleClient
-- enjoy the game!
 
 ## motivation
 
